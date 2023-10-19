@@ -1,59 +1,59 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-  
     public function index()
     {
-        $Products = Product::all();
-      return view ('products.index')->with('products', $Products);
+        $products = Product::all();//getting all product from database
+        return view('products.index', compact('products'));//getting all category from database
+        
     }
 
-    
     public function create()
     {
-        return view('products.create');
+        $categories = Category::all();
+        return view('products.create', compact('categories'));
     }
 
-   
-    public function store(Request $request)
+    public function store(Request $request) //methode signature
     {
-        $input = $request->all();
-        Product::create($input);
-        return redirect('product')->with('flash_message', 'Product Added!');  
+        $input = $request->all(); //input retrieval 
+        Product::create($input); //creating a product element with input array
+        $flash_message = 'Product Added!';
+
+        return redirect()->route('product', compact('flash_message'));
     }
 
-    
     public function show($id)
     {
-        $Product = Product::find($id);
-        return view('products.show')->with('Products', $Product);
+        $product = Product::find($id);
+        return view('products.show', compact('product'));
     }
 
-    
     public function edit($id)
     {
-        $Product = Product::find($id);
-        return view('products.edit')->with('Products', $Product);
+        $product = Product::find($id);
+        return view('products.edit', compact('product'));
     }
 
-  
     public function update(Request $request, $id)
     {
-        $Product = Product::find($id);
+        $product = Product::find($id);
         $input = $request->all();
-        $Product->update($input);
-        return redirect('product')->with('flash_message', 'Product Updated!');  
+        $product->update($input);
+        $flash_message = 'Product Updated!';
+        return redirect()->route('product', compact('flash_message'));
     }
 
-   
     public function destroy($id)
     {
         Product::destroy($id);
-        return redirect('product')->with('flash_message', 'Product deleted!');  
+        $flash_message = 'Product Deleted!';
+        return redirect()->route('product', compact('flash_message'));
     }
 }
