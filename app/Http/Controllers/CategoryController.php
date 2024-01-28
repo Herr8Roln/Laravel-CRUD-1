@@ -6,62 +6,80 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-  
+
     public function index()
     {
-        $categories = Category::all();
-      return view ('categories.index',compact("categories"));
+        $category = Category::all();
+        return view ('category.index',compact("category"));
     }
 
-    
+
     public function create()
     {
-        return view('categories.create');
+        return view('category.create');
     }
-
-   
-    public function store(Request $request)
-    {
-        $input = $request->all();
-        Category::create($input);
-        $flash_message = 'Category Added!';
-
-        return redirect()->route('category', compact('flash_message'));}
-
     
+
+    public function store(Request $request)
+{
+    // Validate the form data
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    // Create a new category instance and save it to the database
+    Category::create([
+        'name' => $request->input('name'),
+        // Add other fields as needed
+    ]);
+
+    $flash_message = 'Category Added!';
+
+    return redirect()->route('category.index', compact('flash_message'));
+}
+
+
     public function show($id)
     {
-        $Category = Category::find($id);
-        return view('categories.show',compact('category'));
+        $category = Category::find($id); //Eloquent ORM (Object-Relational Mapping)
+        return view('category.show',compact('category'));
     }
 
-    
+
     public function edit($id)
     {
-        $Category = Category::find($id);
-        return view('categories.edit',compact('category'));
+        $category = Category::find($id);
+        return view('category.edit',compact('category'));
     }
 
-  
-    public function update(Request $request, $id)
+
+    public function update(Request $request, $category_id)
     {
-        $Category = Category::find($id);
+        $category = Category::find($category_id);
+
         $input = $request->all();
-        $Category->update($input);
-        $flash_message = 'category Updated!';
-        return redirect()->route('category', compact('flash_message'));
+        $category->update($input);
+        $flash_message = 'Category Updated!';
+        return redirect()->route('category.index', compact('flash_message'));
     }
-
-   
-    public function destroy($id)
+        public function destroy($id)
     {
-        Category::destroy($id);
-        $flash_message = 'category deleted!';
-        return redirect()->route('category', compact('flash_message'));
+        // Find the category by ID
+    $category = Category::find($id);
+
+    // Delete all products associated with this category
+    $category->products()->delete();
+
+    // Delete the category
+    $category->delete();
+
+    $flash_message = 'Category and associated products deleted!';
+
+        return redirect()->route('category.index', compact('flash_message'));
     }
     public function showDropdown()
     {
-        $categories = Category::all();
-        return view('category.dropdown', compact('categories'));
+        $category = Category::all();
+        return view('category.dropdown', compact('category'));
     }
 }

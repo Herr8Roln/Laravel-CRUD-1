@@ -22,4 +22,4 @@ Route::get('/', function () {
 Route::resource('/category', CategoryController::class);
 Route::resource('/product', ProductController::class);
 Route::get('/show-dropdown', [CategoryController::class, 'showDropdown']);
-Route::put('/category', [CategoryController::class, 'create']);
+

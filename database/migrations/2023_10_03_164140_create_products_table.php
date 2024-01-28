@@ -19,6 +19,7 @@ return new class extends Migration
         $table->unsignedBigInteger('category_id')->default('9');;
         $table->timestamps();
         $table->foreign('category_id')->references('id')->on('categories');
+        $table->string('picture')->nullable();
     });
 }
 
@@ -28,5 +29,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('products');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('picture');
+        });
     }
 };
